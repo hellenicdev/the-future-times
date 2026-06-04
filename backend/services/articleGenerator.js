@@ -31,12 +31,26 @@ const MOCK_ARTICLES = {
   ],
 }
 
+const usedSlugs = new Set()
+
+function uniqueSlug(title) {
+  let slug = slugify(title)
+  let base = slug
+  let i = 1
+  while (usedSlugs.has(slug)) {
+    slug = `${base}-${i}`
+    i++
+  }
+  usedSlugs.add(slug)
+  return slug
+}
+
 function generateMockArticle(category, futureDate) {
   const articles = MOCK_ARTICLES[category] || MOCK_ARTICLES['Technology']
   const article = articles[Math.floor(Math.random() * articles.length)]
   return {
     ...article,
-    slug: slugify(article.title),
+    slug: uniqueSlug(article.title),
     category,
     futureDate,
   }
@@ -81,7 +95,7 @@ Return valid JSON only with these fields:
     const parsed = JSON.parse(response)
     return {
       title: parsed.title,
-      slug: slugify(parsed.title),
+      slug: uniqueSlug(parsed.title),
       category,
       summary: parsed.summary,
       body: parsed.body,
