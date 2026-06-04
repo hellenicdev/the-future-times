@@ -1,0 +1,9 @@
+{
+  "name": "the-future-times",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "cd backend && node server.js",
+    "dev": "cd backend && npx nodemon server.js"
+  }
+}
