@@ -14,8 +14,18 @@ const app = express()
 connectDB()
 
 app.use(helmet())
+const allowedOrigins = [
+  config.frontendUrl,
+  'https://hellenicdev.github.io',
+  'https://the-future-times.onrender.com',
+  'http://localhost:5500',
+  'http://localhost:3000',
+]
 app.use(cors({
-  origin: config.frontendUrl,
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    cb(new Error('Not allowed by CORS'))
+  },
   credentials: true,
 }))
 app.use(express.json({ limit: '1mb' }))
