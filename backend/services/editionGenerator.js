@@ -1,5 +1,5 @@
 const dataService = require('./dataService')
-const { generateArticle } = require('./articleGenerator')
+const { generateArticle, resetUsedSlugs } = require('./articleGenerator')
 const { generateTrends } = require('./trendEngine')
 
 const CATEGORIES = ['Technology', 'Business', 'Science', 'Climate', 'World', 'Health', 'Sports', 'Entertainment']
@@ -9,10 +9,22 @@ async function getOrCreateEdition(editionDate) {
   const existing = await dataService.findEditionByDate(editionDate)
   if (existing) {
     const articles = await dataService.findArticlesByEditionId(existing._id)
-    return { edition: existing, articles, fromCache: true }
+    if (articles.length > 0) {
+      return { edition: existing, articles, fromCache: true }
+    }
   }
 
-  const edition = await dataService.saveEdition({
+  if (existing) {
+    resetUsedSlugs()
+    await dataService.deleteArticlesByEditionId(existing._id)
+    await dataService.saveEdition({
+      ...existing,
+      headlineCount: 0,
+      generatedAt: new Date(),
+    })
+  }
+
+  const edition = existing || await dataService.saveEdition({
     editionDate,
     headlineCount: 0,
     categories: CATEGORIES,

@@ -16,7 +16,7 @@ async function generateCompletion(messages, options = {}) {
     return null
   }
   const completion = await client.chat.completions.create({
-    model: options.model || 'mixtral-8x7b-32768',
+    model: options.model || 'llama-3.3-70b-versatile',
     messages,
     temperature: options.temperature ?? 0.8,
     max_tokens: options.maxTokens || 2048,

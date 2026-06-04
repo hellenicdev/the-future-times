@@ -61,6 +61,13 @@ async function getDistinctCategories() {
   return Array.from(cats).sort()
 }
 
+async function deleteArticlesByEditionId(editionId) {
+  const articles = Array.from(store.articles.values()).filter(a => a.editionId === editionId)
+  for (const a of articles) {
+    store.articles.delete(a.slug)
+  }
+}
+
 async function countEditions() {
   return store.editions.size
 }
@@ -126,6 +133,7 @@ module.exports = {
   searchArticles,
   getDistinctCategories,
   countEditions,
+  deleteArticlesByEditionId,
   isMockMode: () => !config.mongodbUri,
   saveUser,
   findUserByEmail,

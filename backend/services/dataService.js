@@ -9,8 +9,11 @@ function isConnected() {
 
 async function saveEdition(data) {
   if (isConnected()) {
-    const edition = new Edition(data)
-    return edition.save()
+    return Edition.findOneAndUpdate(
+      { editionDate: data.editionDate },
+      { $set: data },
+      { upsert: true, new: true }
+    )
   }
   return mockDb.saveEdition(data)
 }
@@ -66,6 +69,16 @@ async function searchArticles({ q, category, limit, offset }) {
   return mockDb.searchArticles({ q, category, limit, offset })
 }
 
+async function deleteArticlesByEditionId(editionId) {
+  if (isConnected()) {
+    try {
+      await Article.deleteMany({ editionId })
+    } catch { /* ignore */ }
+    return
+  }
+  return mockDb.deleteArticlesByEditionId(editionId)
+}
+
 async function getDistinctCategories() {
   if (isConnected()) {
     try {
@@ -83,4 +96,5 @@ module.exports = {
   findArticlesByEditionId,
   searchArticles,
   getDistinctCategories,
+  deleteArticlesByEditionId,
 }
