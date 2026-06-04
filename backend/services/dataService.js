@@ -9,10 +9,12 @@ function isConnected() {
 
 async function saveEdition(data) {
   if (isConnected()) {
+    const clean = data.toObject ? data.toObject() : { ...data }
+    delete clean._id
     return Edition.findOneAndUpdate(
-      { editionDate: data.editionDate },
-      { $set: data },
-      { upsert: true, new: true }
+      { editionDate: clean.editionDate },
+      { $set: clean },
+      { upsert: true, new: true, lean: true }
     )
   }
   return mockDb.saveEdition(data)
@@ -21,7 +23,7 @@ async function saveEdition(data) {
 async function findEditionByDate(date) {
   if (isConnected()) {
     try {
-      return await Edition.findOne({ editionDate: date })
+      return await Edition.findOne({ editionDate: date }).lean()
     } catch { return null }
   }
   return mockDb.findEditionByDate(date)
@@ -29,8 +31,8 @@ async function findEditionByDate(date) {
 
 async function saveArticle(data) {
   if (isConnected()) {
-    const article = new Article(data)
-    return article.save()
+    const article = await new Article(data).save()
+    return article.toObject()
   }
   return mockDb.saveArticle(data)
 }
@@ -38,7 +40,7 @@ async function saveArticle(data) {
 async function findArticleBySlug(slug) {
   if (isConnected()) {
     try {
-      return await Article.findOne({ slug })
+      return await Article.findOne({ slug }).lean()
     } catch { return null }
   }
   return mockDb.findArticleBySlug(slug)
@@ -47,7 +49,7 @@ async function findArticleBySlug(slug) {
 async function findArticlesByEditionId(editionId) {
   if (isConnected()) {
     try {
-      return await Article.find({ editionId })
+      return await Article.find({ editionId }).lean()
     } catch { return [] }
   }
   return mockDb.findArticlesByEditionId(editionId)
@@ -63,6 +65,7 @@ async function searchArticles({ q, category, limit, offset }) {
       .skip(parseInt(offset, 10) || 0)
       .limit(parseInt(limit, 10) || 20)
       .select('title slug category summary confidence futureDate')
+      .lean()
     const total = await Article.countDocuments(query)
     return { articles, total }
   }
