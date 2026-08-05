@@ -16,7 +16,7 @@ connectDB()
 app.use(helmet())
 const allowedOrigins = [
   config.frontendUrl,
-  'https://hellenicdev.github.io',
+  'https://hellenicdev.eu',
   'https://the-future-times.onrender.com',
   'http://localhost:5500',
   'http://localhost:3000',
