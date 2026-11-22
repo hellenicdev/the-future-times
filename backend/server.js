@@ -10,6 +10,7 @@ const userRoutes = require('./routes/user')
 const errorHandler = require('./middleware/errorHandler')
 
 const app = express()
+app.set('trust proxy', 1)
 
 connectDB()
 
