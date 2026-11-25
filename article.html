@@ -50,35 +50,35 @@
         return
       }
       try {
-        const article = await apiFetch(`/article/${slug}`)
+        const article = await apiFetch(`/article/${encodeURIComponent(slug)}`)
         const confidenceColor = article.confidence >= 70 ? '#27ae60' : article.confidence >= 40 ? '#f39c12' : '#c0392b'
         let html = ''
-        html += `<span class="category-badge">${article.category}</span>`
-        html += `<h1>${article.title}</h1>`
+        html += `<span class="category-badge">${escapeHtml(article.category)}</span>`
+        html += `<h1>${escapeHtml(article.title)}</h1>`
         html += `<div class="article-meta">`
         html +=   `Future Date: ${new Date(article.futureDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`
         html +=   ` &middot; Generated: ${new Date(article.createdAt).toLocaleDateString()}`
         html += `</div>`
         html += `<div class="article-body">`
-        html +=   article.body.split('\n\n').map(p => `<p>${p}</p>`).join('')
+        html +=   article.body.split('\n\n').map(p => `<p>${escapeHtml(p)}</p>`).join('')
         html += `</div>`
         html += `<div class="confidence-meter">`
         html +=   `<h3>Prediction Confidence</h3>`
-        html +=   `<div class="meter-bar"><div class="meter-fill" style="width:${article.confidence}%;background:${confidenceColor}"></div></div>`
-        html +=   `<div class="meter-value">${article.confidence}%</div>`
+        html +=   `<div class="meter-bar"><div class="meter-fill" style="width:${Number(article.confidence) || 0}%;background:${confidenceColor}"></div></div>`
+        html +=   `<div class="meter-value">${Number(article.confidence) || 0}%</div>`
         if (article.confidenceExplanation) {
-          html += `<div class="meter-explanation">${article.confidenceExplanation}</div>`
+          html += `<div class="meter-explanation">${escapeHtml(article.confidenceExplanation)}</div>`
         }
         html += `</div>`
 
         if (typeof isLoggedIn !== 'undefined' && isLoggedIn()) {
-          html += `<button class="btn btn-ghost" onclick="saveArticle('${article.id}')">Save Article</button>`
+          html += `<button class="btn btn-ghost" onclick="saveArticle('${escapeHtml(article.id)}')">Save Article</button>`
         }
 
         container.innerHTML = html
-        document.title = `${article.title} - The Future Times`
+        document.title = `${escapeHtml(article.title)} - The Future Times`
       } catch (err) {
-        container.innerHTML = `<p style="color:var(--red)">Error: ${err.message}</p>`
+        container.innerHTML = `<p style="color:var(--red)">Error: ${escapeHtml(err.message)}</p>`
       }
     })
 

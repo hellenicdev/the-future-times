@@ -33,7 +33,7 @@ async function loadEdition(date) {
     currentEdition = data.edition
     renderEdition(data, date)
   } catch (err) {
-    content.innerHTML = `<div class="loading"><p style="color:var(--red)">Error: ${err.message}</p></div>`
+    content.innerHTML = `<div class="loading"><p style="color:var(--red)">Error: ${escapeHtml(err.message)}</p></div>`
   }
 }
 
@@ -54,21 +54,21 @@ function renderEdition(data, date) {
 
   // Date display
   html += `<div class="hero-article">`
-  html += `<span class="category-badge">${hero.category} &mdash; Top Story</span>`
-  html += `<h2><a href="article.html?slug=${hero.slug}">${hero.title}</a></h2>`
-  html += `<p class="summary">${hero.summary}</p>`
-  html += `<p class="meta">Prediction Confidence: ${hero.confidence}% &middot; ${formatShortDate(date)}</p>`
+  html += `<span class="category-badge">${escapeHtml(hero.category)} &mdash; Top Story</span>`
+  html += `<h2><a href="article.html?slug=${encodeURIComponent(hero.slug)}">${escapeHtml(hero.title)}</a></h2>`
+  html += `<p class="summary">${escapeHtml(hero.summary)}</p>`
+  html += `<p class="meta">Prediction Confidence: ${Number(hero.confidence) || 0}% &middot; ${formatShortDate(date)}</p>`
   html += `</div>`
 
   // Grid
   html += `<div class="article-grid">`
   for (const article of rest) {
     html += `<div class="article-card">`
-    html += `<span class="category-badge">${article.category}</span>`
-    html += `<h3><a href="article.html?slug=${article.slug}">${article.title}</a></h3>`
-    html += `<p class="summary">${article.summary}</p>`
-    html += `<p class="meta">Confidence: ${article.confidence}%</p>`
-    html += `<div class="confidence-bar"><div class="confidence-fill" style="width:${article.confidence}%"></div></div>`
+    html += `<span class="category-badge">${escapeHtml(article.category)}</span>`
+    html += `<h3><a href="article.html?slug=${encodeURIComponent(article.slug)}">${escapeHtml(article.title)}</a></h3>`
+    html += `<p class="summary">${escapeHtml(article.summary)}</p>`
+    html += `<p class="meta">Confidence: ${Number(article.confidence) || 0}%</p>`
+    html += `<div class="confidence-bar"><div class="confidence-fill" style="width:${Number(article.confidence) || 0}%"></div></div>`
     html += `</div>`
   }
   html += `</div>`
@@ -125,7 +125,7 @@ function showAuthLinks() {
   if (isLoggedIn()) {
     const user = getUser()
     container.innerHTML = `
-      <span>${user?.email || 'User'}</span>
+      <span>${escapeHtml(user?.email || 'User')}</span>
       <a href="saved.html">Saved</a>
       <a href="#" id="logout-btn">Logout</a>
     `
