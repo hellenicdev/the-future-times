@@ -60,17 +60,17 @@
         html += `<div class="article-grid">`
         for (const article of data.articles) {
           html += `<div class="article-card">`
-          html += `<span class="category-badge">${article.category}</span>`
-          html += `<h3><a href="article.html?slug=${article.slug}">${article.title}</a></h3>`
-          html += `<p class="summary">${article.summary}</p>`
-          html += `<p class="meta">Confidence: ${article.confidence}%</p>`
-          html += `<div class="confidence-bar"><div class="confidence-fill" style="width:${article.confidence}%"></div></div>`
+          html += `<span class="category-badge">${escapeHtml(article.category)}</span>`
+          html += `<h3><a href="article.html?slug=${encodeURIComponent(article.slug)}">${escapeHtml(article.title)}</a></h3>`
+          html += `<p class="summary">${escapeHtml(article.summary)}</p>`
+          html += `<p class="meta">Confidence: ${Number(article.confidence) || 0}%</p>`
+          html += `<div class="confidence-bar"><div class="confidence-fill" style="width:${Number(article.confidence) || 0}%"></div></div>`
           html += `</div>`
         }
         html += `</div>`
         content.innerHTML = html
       } catch (err) {
-        content.innerHTML = `<p style="color:var(--red)">Error: ${err.message}</p>`
+        content.innerHTML = `<p style="color:var(--red)">Error: ${escapeHtml(err.message)}</p>`
       }
     }
 

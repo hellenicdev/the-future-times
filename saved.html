@@ -51,15 +51,15 @@
         let html = ''
         for (const article of articles) {
           html += `<div class="article-card" style="margin-bottom:16px;">`
-          html += `<span class="category-badge">${article.category}</span>`
-          html += `<h3><a href="article.html?slug=${article.slug}">${article.title}</a></h3>`
-          html += `<p class="summary">${article.summary}</p>`
-          html += `<p class="meta">${article.futureDate} &middot; Confidence: ${article.confidence}%</p>`
+          html += `<span class="category-badge">${escapeHtml(article.category)}</span>`
+          html += `<h3><a href="article.html?slug=${encodeURIComponent(article.slug)}">${escapeHtml(article.title)}</a></h3>`
+          html += `<p class="summary">${escapeHtml(article.summary)}</p>`
+          html += `<p class="meta">${escapeHtml(article.futureDate)} &middot; Confidence: ${Number(article.confidence) || 0}%</p>`
           html += `</div>`
         }
         content.innerHTML = html
       } catch (err) {
-        content.innerHTML = `<p style="color:var(--red)">Error: ${err.message}</p>`
+        content.innerHTML = `<p style="color:var(--red)">Error: ${escapeHtml(err.message)}</p>`
       }
     })
   </script>
